@@ -1,6 +1,8 @@
 # Spar
 
-Spar is a pass-device debate game: pick a motion, assign sides, run timed rounds, and get a scored result card.
+Spar is a fast pass-device debate game: pick a motion, assign sides, run timed rounds, and get a scored result card.
+
+The frontend is a native ES module app split into `src/components`, `src/data`, `src/lib`, `src/state`, and `src/styles`. It intentionally avoids a heavy framework runtime so the first load stays quick.
 
 ## Local run
 
@@ -10,7 +12,9 @@ npm run dev
 
 Open `http://localhost:4173`.
 
-Without `ANTHROPIC_API_KEY`, local development uses a deterministic demo judge. In production, set `ANTHROPIC_API_KEY` so `/api/judge` can call Anthropic from the server.
+Without `ANTHROPIC_API_KEY`, local development uses a deterministic demo judge. Static hosting, such as GitHub Pages, also falls back to the browser demo judge when `/api/judge` is unavailable.
+
+In production on serverless hosting, set `ANTHROPIC_API_KEY` so `/api/judge` can call Anthropic from the server.
 
 ## Launch resources
 

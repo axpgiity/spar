@@ -1,0 +1,784 @@
+:root {
+  color-scheme: dark;
+  --page: #061720;
+  --ink: #fff8df;
+  --muted: #adc0bf;
+  --line: rgba(255, 255, 255, .16);
+  --glass: rgba(5, 20, 26, .72);
+  --glassStrong: rgba(8, 28, 35, .9);
+  --lime: #f4f72e;
+  --mint: #39e6af;
+  --sky: #52aaff;
+  --ash: #aeb8bb;
+  --dark: #031119;
+  --shadow: 0 30px 90px rgba(0, 0, 0, .42);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+  margin: 0;
+  background: var(--page);
+  color: var(--ink);
+}
+
+body {
+  overflow-x: hidden;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  border: 0;
+}
+
+#appRoot {
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(6, 23, 32, .04), rgba(6, 23, 32, 1) 76%),
+    url("../../assets/spar-arena.png") center top / min(1760px, 150vw) auto no-repeat,
+    var(--page);
+}
+
+.gameShell {
+  width: min(1220px, calc(100vw - 28px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 18px 0 42px;
+}
+
+.topBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 44px;
+}
+
+.brandButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border-radius: 999px;
+  background: rgba(5, 20, 26, .38);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.brandMark {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(244, 247, 46, .55);
+  border-radius: 10px;
+  background: rgba(244, 247, 46, .14);
+  color: var(--lime);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.brandName {
+  font-size: 15px;
+  font-weight: 950;
+  letter-spacing: .12em;
+}
+
+.statusPill,
+.heroMeta span,
+.motionChip span,
+.winnerBadge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 11px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .08);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.heroBoard {
+  position: relative;
+  margin-top: 20px;
+}
+
+.heroScene {
+  min-height: min(760px, calc(100vh - 92px));
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 18px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(3, 17, 25, 0) 0%, rgba(3, 17, 25, .1) 40%, rgba(3, 17, 25, .98) 66%),
+    url("../../assets/spar-arena.png") center top / cover no-repeat;
+  box-shadow: var(--shadow);
+}
+
+.heroText {
+  width: min(820px, calc(100% - 30px));
+  padding: 0 0 176px;
+  text-align: center;
+}
+
+.eyebrow,
+.dockLabel {
+  margin: 0;
+  color: var(--lime);
+  font-size: 12px;
+  font-weight: 950;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.heroText h1 {
+  margin: 14px auto 0;
+  color: var(--lime);
+  font-size: clamp(34px, 5.4vw, 70px);
+  line-height: 1;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+.heroMeta {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.launchDock {
+  width: min(1030px, calc(100% - 28px));
+  margin: -136px auto 0;
+  padding: 18px;
+  border: 1px solid rgba(255, 255, 255, .28);
+  border-radius: 22px;
+  background: rgba(176, 185, 188, .86);
+  color: #10181b;
+  box-shadow: 0 22px 70px rgba(0, 0, 0, .36);
+  backdrop-filter: blur(18px);
+}
+
+.dockHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.dockHeader h2 {
+  margin: 4px 0 0;
+  font-size: clamp(22px, 3vw, 38px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.motionRail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(230px, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+  padding-bottom: 5px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+}
+
+.motionChip,
+.modeCard,
+.primaryButton,
+.ghostButton {
+  min-height: 48px;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: transform .14s ease, border-color .14s ease, background .14s ease;
+}
+
+.motionChip {
+  scroll-snap-align: start;
+  padding: 13px;
+  border: 1px solid rgba(7, 24, 34, .18);
+  background: rgba(255, 255, 255, .4);
+  color: #10181b;
+  text-align: left;
+}
+
+.motionChip strong {
+  display: block;
+  margin-top: 9px;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.motionChip span {
+  min-height: 24px;
+  padding: 4px 8px;
+  border-color: rgba(7, 24, 34, .16);
+  background: rgba(7, 24, 34, .08);
+  color: #334044;
+}
+
+.motionChip:hover,
+.modeCard:hover,
+.primaryButton:hover,
+.ghostButton:hover {
+  transform: translateY(-2px);
+}
+
+.motionChip.isActive,
+.modeCard.isActive {
+  border-color: rgba(244, 247, 46, .95);
+  background: rgba(244, 247, 46, .28);
+}
+
+.playGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr .9fr;
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.controlPanel {
+  padding: 13px;
+  border: 1px solid rgba(7, 24, 34, .14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .26);
+}
+
+.glassInput {
+  display: grid;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.glassInput span {
+  color: #334044;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.glassInput input,
+.speechPad textarea {
+  width: 100%;
+  border: 1px solid rgba(7, 24, 34, .16);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, .46);
+  color: #10181b;
+  outline: 0;
+}
+
+.glassInput input {
+  height: 46px;
+  padding: 0 13px;
+}
+
+.glassInput input:focus,
+.speechPad textarea:focus {
+  border-color: rgba(244, 247, 46, .95);
+  box-shadow: 0 0 0 4px rgba(244, 247, 46, .2);
+}
+
+.playerGrid,
+.modeSwitch {
+  display: grid;
+  gap: 10px;
+}
+
+.playerGrid {
+  grid-template-columns: 1fr 1fr;
+}
+
+.modeCard {
+  display: grid;
+  gap: 4px;
+  width: 100%;
+  padding: 12px;
+  border: 1px solid rgba(7, 24, 34, .16);
+  background: rgba(255, 255, 255, .36);
+  color: #10181b;
+  text-align: left;
+}
+
+.modeCard strong {
+  font-size: 16px;
+}
+
+.modeCard span {
+  color: #334044;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.primaryButton,
+.ghostButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 18px;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.primaryButton {
+  background: var(--lime);
+  color: #10181b;
+}
+
+.ghostButton {
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, .08);
+  color: var(--ink);
+}
+
+.matchLayout {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 22px;
+}
+
+.scoreSide,
+.playSurface {
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.motionCard,
+.versusCard,
+.playSurface,
+.resultCard,
+.judgingPanel {
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--glass);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+}
+
+.motionCard {
+  padding: 20px;
+}
+
+.motionCard h1 {
+  margin: 12px 0 0;
+  font-size: clamp(28px, 4vw, 46px);
+  line-height: 1;
+  text-wrap: balance;
+}
+
+.motionCard p {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.versusCard {
+  padding: 14px;
+}
+
+.playerCard {
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .06);
+}
+
+.playerCard.isActive.aff {
+  border-color: rgba(57, 230, 175, .7);
+  box-shadow: 0 0 35px rgba(57, 230, 175, .14);
+}
+
+.playerCard.isActive.neg {
+  border-color: rgba(82, 170, 255, .7);
+  box-shadow: 0 0 35px rgba(82, 170, 255, .14);
+}
+
+.playerCard span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.playerCard strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 24px;
+  overflow-wrap: anywhere;
+}
+
+.versusLine {
+  display: grid;
+  place-items: center;
+  height: 42px;
+  color: var(--lime);
+  font-weight: 950;
+}
+
+.playSurface {
+  padding: 18px;
+}
+
+.roundTrack {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 6px;
+}
+
+.roundDot {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.roundDot.isDone {
+  background: rgba(57, 230, 175, .7);
+}
+
+.roundDot.isCurrent {
+  background: var(--lime);
+}
+
+.clockCard {
+  position: relative;
+  min-height: 300px;
+  display: grid;
+  place-items: center;
+  margin-top: 8px;
+  border-radius: 26px;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(244, 247, 46, .13), transparent 38%),
+    rgba(255, 255, 255, .055);
+  overflow: hidden;
+}
+
+.clockCard.affGlow {
+  box-shadow: inset 0 0 0 1px rgba(57, 230, 175, .18);
+}
+
+.clockCard.negGlow {
+  box-shadow: inset 0 0 0 1px rgba(82, 170, 255, .18);
+}
+
+.clockRing {
+  width: min(230px, 56vw);
+  transform: rotate(-90deg);
+}
+
+.clockRing circle {
+  fill: none;
+  stroke: rgba(255, 255, 255, .13);
+  stroke-width: 8;
+}
+
+.clockRing .clockValue {
+  stroke: var(--lime);
+  stroke-dasharray: 326;
+  stroke-linecap: round;
+  transition: stroke-dashoffset .35s linear;
+}
+
+.clockText {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.clockText span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.clockText strong {
+  color: var(--ink);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: clamp(54px, 9vw, 92px);
+  line-height: 1;
+}
+
+.clockText em {
+  max-width: 220px;
+  color: var(--lime);
+  font-style: normal;
+  font-weight: 850;
+  overflow-wrap: anywhere;
+}
+
+.promptCard {
+  padding: 16px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .06);
+}
+
+.promptCard span,
+.speechPad span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.promptCard h2 {
+  margin: 7px 0 0;
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1.08;
+}
+
+.speechPad {
+  display: grid;
+  gap: 10px;
+}
+
+.speechPad textarea {
+  min-height: 190px;
+  padding: 16px;
+  background: rgba(255, 255, 255, .92);
+  color: #10181b;
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.matchActions,
+.resultActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.judgingShell {
+  display: grid;
+  align-items: center;
+}
+
+.judgingPanel {
+  display: grid;
+  place-items: center;
+  min-height: 520px;
+  text-align: center;
+}
+
+.pulseOrb {
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: var(--lime);
+  animation: pulse 1s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(.82); opacity: .55; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+.judgingPanel h1 {
+  margin: 24px 0 0;
+  font-size: clamp(38px, 7vw, 86px);
+}
+
+.judgingPanel p {
+  margin: 10px 0 0;
+  color: var(--muted);
+}
+
+.resultShell {
+  width: min(940px, calc(100vw - 28px));
+}
+
+.resultCard {
+  margin-top: 28px;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(3, 17, 25, .2), rgba(3, 17, 25, .96) 54%),
+    url("../../assets/spar-arena.png") center top / cover no-repeat;
+}
+
+.resultHero {
+  padding: clamp(28px, 6vw, 64px);
+  text-align: center;
+}
+
+.resultHero h1 {
+  margin: 16px auto 0;
+  color: var(--lime);
+  font-size: clamp(36px, 7vw, 86px);
+  line-height: .95;
+  text-wrap: balance;
+}
+
+.winnerBadge {
+  margin-top: 24px;
+  color: #10181b;
+  background: var(--lime);
+}
+
+.resultHero strong {
+  display: block;
+  margin-top: 10px;
+  font-size: clamp(42px, 8vw, 96px);
+  line-height: .94;
+  overflow-wrap: anywhere;
+}
+
+.resultHero p {
+  max-width: 720px;
+  margin: 18px auto 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.scoreRows {
+  display: grid;
+  gap: 12px;
+  padding: 0 clamp(18px, 5vw, 54px) 28px;
+}
+
+.scoreRow {
+  display: grid;
+  grid-template-columns: 110px 1fr 56px;
+  gap: 12px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.scoreBar {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .12);
+}
+
+.scoreBar i,
+.scoreBar b {
+  height: 100%;
+}
+
+.scoreBar i {
+  justify-self: end;
+  background: var(--mint);
+}
+
+.scoreBar b {
+  justify-self: start;
+  background: var(--sky);
+}
+
+.noteGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 0 clamp(18px, 5vw, 54px) clamp(24px, 5vw, 54px);
+}
+
+.noteGrid div {
+  min-height: 86px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .06);
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.noteGrid span {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.resultActions {
+  margin-top: 18px;
+}
+
+@media (max-width: 980px) {
+  .playGrid,
+  .matchLayout {
+    grid-template-columns: 1fr;
+  }
+
+  .heroText {
+    padding-bottom: 164px;
+  }
+
+  .scoreSide {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .gameShell {
+    width: min(100vw - 18px, 1220px);
+    padding-top: 10px;
+  }
+
+  .topBar,
+  .dockHeader,
+  .matchActions,
+  .resultActions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .brandButton,
+  .primaryButton,
+  .ghostButton {
+    width: 100%;
+  }
+
+  .heroScene {
+    min-height: 680px;
+    border-radius: 14px;
+    background-position: center top;
+  }
+
+  .heroText {
+    width: min(100% - 18px, 820px);
+    padding-bottom: 158px;
+  }
+
+  .launchDock {
+    width: calc(100% - 12px);
+    margin-top: -138px;
+    padding: 12px;
+    border-radius: 18px;
+  }
+
+  .motionRail {
+    grid-auto-columns: minmax(210px, 82vw);
+  }
+
+  .playerGrid,
+  .scoreSide,
+  .noteGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .scoreRow {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+}

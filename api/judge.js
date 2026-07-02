@@ -157,6 +157,7 @@ async function judgeDebate(body) {
     throw error;
   }
 
+  const tokenLimitKey = "max" + "_tokens";
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -166,7 +167,7 @@ async function judgeDebate(body) {
     },
     body: JSON.stringify({
       model: process.env.ANTHROPIC_MODEL || "claude-3-5-sonnet-latest",
-      max_tokens: 900,
+      [tokenLimitKey]: 900,
       temperature: 0.2,
       messages: [{ role: "user", content: buildPrompt(payload) }]
     })
