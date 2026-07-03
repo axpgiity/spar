@@ -14,7 +14,9 @@ Open `http://localhost:4173`.
 
 Without `ANTHROPIC_API_KEY`, local development uses a deterministic demo judge. Static hosting, such as GitHub Pages, also falls back to the browser demo judge when `/api/judge` is unavailable.
 
-In production on serverless hosting, set `ANTHROPIC_API_KEY` so `/api/judge` can call Anthropic from the server.
+For the GitHub Pages version, players can paste their own Gemini key in the UI for AI judging. The key is kept in memory for that browser session and is not saved to localStorage.
+
+In production on serverless hosting, set `GEMINI_API_KEY` for server-side Gemini judging.
 
 ## Launch resources
 

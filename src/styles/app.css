@@ -44,8 +44,7 @@ button {
 #appRoot {
   min-height: 100vh;
   background:
-    linear-gradient(180deg, rgba(6, 23, 32, .04), rgba(6, 23, 32, 1) 76%),
-    url("../../assets/spar-arena.png") center top / min(1760px, 150vw) auto no-repeat,
+    linear-gradient(180deg, #0a2a30 0%, #061720 46%, #041018 100%),
     var(--page);
 }
 
@@ -114,6 +113,14 @@ button {
   margin-top: 20px;
 }
 
+.arcadeHome {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(330px, .78fr);
+  gap: 18px;
+  align-items: stretch;
+  margin-top: 18px;
+}
+
 .heroScene {
   min-height: min(760px, calc(100vh - 92px));
   display: flex;
@@ -128,10 +135,57 @@ button {
   box-shadow: var(--shadow);
 }
 
+.gameCabinet {
+  position: sticky;
+  top: 18px;
+  min-height: calc(100vh - 82px);
+  border: 5px solid rgba(255, 248, 223, .18);
+  border-bottom-width: 12px;
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(3, 17, 25, 0) 0%, rgba(3, 17, 25, .05) 34%, rgba(3, 17, 25, .96) 63%),
+    url("../../assets/spar-arena.png") center top / cover no-repeat;
+}
+
+.gameCabinet::after {
+  content: "";
+  position: absolute;
+  inset: 12px;
+  border: 1px solid rgba(244, 247, 46, .18);
+  border-radius: 24px;
+  pointer-events: none;
+}
+
+.cabinetHud {
+  position: absolute;
+  inset: 18px 18px auto;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cabinetHud span,
+.cabinetHud strong {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 12px;
+  border: 1px solid rgba(255, 255, 255, .25);
+  border-radius: 999px;
+  background: rgba(3, 17, 25, .48);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
 .heroText {
   width: min(820px, calc(100% - 30px));
   padding: 0 0 176px;
   text-align: center;
+  z-index: 1;
 }
 
 .eyebrow,
@@ -153,6 +207,14 @@ button {
   text-wrap: balance;
 }
 
+.gameCabinet .heroText {
+  padding-bottom: clamp(54px, 10vh, 110px);
+}
+
+.gameCabinet .heroText h1 {
+  text-shadow: 0 4px 0 rgba(0, 0, 0, .38), 0 14px 38px rgba(0, 0, 0, .45);
+}
+
 .heroMeta {
   display: flex;
   justify-content: center;
@@ -170,6 +232,237 @@ button {
   color: #10181b;
   box-shadow: 0 22px 70px rgba(0, 0, 0, .36);
   backdrop-filter: blur(18px);
+}
+
+.arcadePanel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  padding: 16px;
+  border: 4px solid rgba(255, 248, 223, .18);
+  border-radius: 34px;
+  background:
+    linear-gradient(180deg, rgba(255, 248, 223, .08), rgba(255, 248, 223, 0) 150px),
+    rgba(7, 25, 34, .86);
+  box-shadow: var(--shadow);
+}
+
+.megaPlayButton {
+  min-height: 116px;
+  border: 0;
+  border-radius: 28px;
+  background:
+    linear-gradient(180deg, #ffff67, var(--lime) 58%, #b4b900);
+  color: #122022;
+  cursor: pointer;
+  box-shadow: 0 11px 0 #6e7600, 0 22px 52px rgba(0, 0, 0, .38);
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.megaPlayButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 0 #6e7600, 0 28px 60px rgba(0, 0, 0, .44);
+}
+
+.megaPlayButton:active {
+  transform: translateY(7px);
+  box-shadow: 0 4px 0 #6e7600, 0 16px 34px rgba(0, 0, 0, .34);
+}
+
+.megaPlayButton span,
+.megaPlayButton strong {
+  display: block;
+}
+
+.megaPlayButton span {
+  font-size: clamp(38px, 6vw, 68px);
+  line-height: .88;
+  font-weight: 1000;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.megaPlayButton strong {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 950;
+  opacity: .74;
+  text-transform: uppercase;
+}
+
+.quickActions,
+.bottomDeck,
+.drawerGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.quickActions {
+  grid-template-columns: 1fr 1fr;
+}
+
+.chunkButton,
+.arenaCard,
+.modeTile,
+.playerDrawer {
+  border: 1px solid rgba(255, 255, 255, .14);
+  background: rgba(255, 255, 255, .08);
+  color: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .13);
+}
+
+.chunkButton,
+.modeTile {
+  min-height: 74px;
+  padding: 12px;
+  border-radius: 22px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.chunkButton:hover,
+.arenaCard:hover,
+.modeTile:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, .12);
+}
+
+.chunkButton span,
+.arenaCard span,
+.modeTile span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.chunkButton strong,
+.modeTile strong {
+  display: block;
+  margin-top: 5px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.customTray {
+  padding: 12px;
+  border: 1px solid rgba(244, 247, 46, .34);
+  border-radius: 22px;
+  background: rgba(244, 247, 46, .08);
+}
+
+.arenaSelect {
+  display: grid;
+  gap: 10px;
+}
+
+.arenaCard {
+  min-height: 108px;
+  padding: 14px;
+  border-radius: 24px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform .12s ease, background .12s ease, border-color .12s ease;
+}
+
+.arenaCard strong {
+  display: block;
+  margin-top: 7px;
+  color: var(--ink);
+  font-size: clamp(18px, 2.5vw, 25px);
+  line-height: 1.04;
+}
+
+.arenaCard em {
+  display: block;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 720;
+  line-height: 1.3;
+}
+
+.arenaCard.isActive,
+.modeTile.isActive {
+  border-color: rgba(244, 247, 46, .85);
+  background: rgba(244, 247, 46, .16);
+  box-shadow: inset 0 0 0 2px rgba(244, 247, 46, .18), 0 10px 30px rgba(244, 247, 46, .08);
+}
+
+.modeDeck {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.modeTile em {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 760;
+}
+
+.playerDrawer {
+  border-radius: 22px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.playerDrawer summary {
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 950;
+}
+
+.drawerGrid {
+  padding: 0 12px 12px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.gameInput {
+  display: grid;
+  gap: 7px;
+}
+
+.gameInput span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 950;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.gameInput input {
+  width: 100%;
+  height: 48px;
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .9);
+  color: #10181b;
+  padding: 0 13px;
+  outline: 0;
+}
+
+.gameInput input:focus {
+  border-color: var(--lime);
+  box-shadow: 0 0 0 4px rgba(244, 247, 46, .18);
+}
+
+.keySlot {
+  padding: 12px;
+  border: 1px solid rgba(57, 230, 175, .24);
+  border-radius: 22px;
+  background: rgba(57, 230, 175, .08);
 }
 
 .dockHeader {
@@ -716,8 +1009,15 @@ button {
 
 @media (max-width: 980px) {
   .playGrid,
-  .matchLayout {
+  .matchLayout,
+  .arcadeHome {
     grid-template-columns: 1fr;
+  }
+
+  .gameCabinet {
+    position: relative;
+    top: auto;
+    min-height: 650px;
   }
 
   .heroText {
@@ -755,9 +1055,37 @@ button {
     background-position: center top;
   }
 
+  .gameCabinet {
+    min-height: 620px;
+    border-radius: 24px;
+  }
+
+  .cabinetHud {
+    inset: 12px 12px auto;
+  }
+
+  .cabinetHud strong {
+    display: none;
+  }
+
   .heroText {
     width: min(100% - 18px, 820px);
     padding-bottom: 158px;
+  }
+
+  .gameCabinet .heroText {
+    padding-bottom: 44px;
+  }
+
+  .arcadePanel {
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  .quickActions,
+  .modeDeck,
+  .drawerGrid {
+    grid-template-columns: 1fr;
   }
 
   .launchDock {

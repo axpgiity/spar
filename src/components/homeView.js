@@ -7,74 +7,92 @@ export function homeView(root, gameState, store) {
   const selectedMotion = gameState.isCustomMotion
     ? { title: gameState.customMotion || "Type your own debate motion", type: "Custom", heat: "Live", angle: "Your table, your fight." }
     : motions.find((motion) => motion.id === gameState.motionId) || motions[0];
+  const selectedFormat = formats[gameState.formatId] || formats.blitz;
 
   root.innerHTML = `
     <main class="gameShell homeShell">
       ${topBar("Fast debate game")}
-      <section class="heroBoard">
-        <div class="heroScene">
+      <section class="arcadeHome">
+        <div class="heroScene gameCabinet">
+          <div class="cabinetHud">
+            <span>${html(selectedMotion.type)}</span>
+            <strong>${html(selectedFormat.label)} / ${html(selectedFormat.length)}</strong>
+          </div>
           <div class="heroText">
             <div class="eyebrow">Viral debate</div>
             <h1 data-live-motion-title>${html(selectedMotion.title)}</h1>
             <div class="heroMeta">
-              <span>${html(selectedMotion.type)}</span>
               <span>${html(selectedMotion.heat)}</span>
+              <span>${html(selectedMotion.angle)}</span>
             </div>
           </div>
         </div>
 
-        <div class="launchDock">
-          <div class="dockHeader">
-            <div>
-              <p class="dockLabel">Choose the table</p>
-              <h2>Tap in. Argue fast. Share the card.</h2>
-            </div>
-            <button class="primaryButton startButton" data-action="startMatch">Start match</button>
+        <div class="arcadePanel">
+          <button class="megaPlayButton" data-action="startMatch">
+            <span>Play now</span>
+            <strong>${html(selectedFormat.vibe)}</strong>
+          </button>
+
+          <div class="quickActions">
+            <button class="chunkButton" data-action="randomMotion">
+              <span>New topic</span>
+              <strong>Shuffle</strong>
+            </button>
+            <button class="chunkButton" data-action="customMotion">
+              <span>Your fight</span>
+              <strong>Custom</strong>
+            </button>
           </div>
 
-          <div class="motionRail" aria-label="Debate motions">
+          <label class="gameInput keySlot">
+            <span>Gemini key</span>
+            <input data-field="geminiKey" type="password" value="${html(gameState.geminiKey || "")}" placeholder="Paste your key for AI judging">
+          </label>
+
+          ${gameState.isCustomMotion ? `
+            <div class="customTray">
+              <label class="gameInput">
+                <span>Motion</span>
+                <input data-field="customMotion" value="${html(gameState.customMotion)}" placeholder="Type the debate everyone is arguing about">
+              </label>
+            </div>
+          ` : ""}
+
+          <div class="arenaSelect" aria-label="Debate motions">
             ${motions.map((motion) => `
-              <button class="motionChip ${motion.id === gameState.motionId && !gameState.isCustomMotion ? "isActive" : ""}" data-motion-id="${html(motion.id)}">
-                <span>${html(motion.type)}</span>
+              <button class="arenaCard ${motion.id === gameState.motionId && !gameState.isCustomMotion ? "isActive" : ""}" data-motion-id="${html(motion.id)}">
+                <span>${html(motion.type)} / ${html(motion.heat)}</span>
                 <strong>${html(motion.title)}</strong>
+                <em>${html(motion.angle)}</em>
               </button>
             `).join("")}
           </div>
 
-          <div class="playGrid">
-            <section class="controlPanel">
-              <p class="dockLabel">Custom motion</p>
-              <label class="glassInput">
-                <span>Debate this</span>
-                <input data-field="customMotion" value="${html(gameState.customMotion)}" placeholder="e.g. Can 100 humans defeat a gorilla?">
-              </label>
-            </section>
+          <div class="bottomDeck">
+            <div class="modeDeck">
+              ${Object.values(formats).map((format) => `
+                <button class="modeTile ${format.id === gameState.formatId ? "isActive" : ""}" data-format-id="${html(format.id)}">
+                  <span>${html(format.length)}</span>
+                  <strong>${html(format.label)}</strong>
+                  <em>${html(format.vibe)}</em>
+                </button>
+              `).join("")}
+            </div>
 
-            <section class="controlPanel">
-              <p class="dockLabel">Players</p>
-              <div class="playerGrid">
-                <label class="glassInput">
+            <details class="playerDrawer">
+              <summary>Player names</summary>
+              <div class="drawerGrid">
+                <label class="gameInput">
                   <span>Player 1</span>
-                  <input data-field="playerOne" value="${html(gameState.names.playerOne)}" placeholder="Priya">
+                  <input data-field="playerOne" value="${html(gameState.names.playerOne)}" placeholder="Player 1">
                 </label>
-                <label class="glassInput">
+                <label class="gameInput">
                   <span>Player 2</span>
-                  <input data-field="playerTwo" value="${html(gameState.names.playerTwo)}" placeholder="Sam">
+                  <input data-field="playerTwo" value="${html(gameState.names.playerTwo)}" placeholder="Player 2">
                 </label>
               </div>
-            </section>
-
-            <section class="controlPanel">
-              <p class="dockLabel">Mode</p>
-              <div class="modeSwitch">
-                ${Object.values(formats).map((format) => `
-                  <button class="modeCard ${format.id === gameState.formatId ? "isActive" : ""}" data-format-id="${html(format.id)}">
-                    <strong>${html(format.label)}</strong>
-                    <span>${html(format.length)} - ${html(format.vibe)}</span>
-                  </button>
-                `).join("")}
-              </div>
-            </section>
+            </details>
           </div>
         </div>
       </section>
@@ -89,6 +107,15 @@ export function homeView(root, gameState, store) {
     store.chooseFormat(event.currentTarget.dataset.formatId);
   });
 
+  bind(root, "[data-action='randomMotion']", "click", () => {
+    store.randomizeMotion();
+  });
+
+  bind(root, "[data-action='customMotion']", "click", () => {
+    store.setCustomMotion(gameState.customMotion || "");
+    store.chooseFormat(gameState.formatId);
+  });
+
   bind(root, "[data-field='customMotion']", "input", (event) => {
     store.setCustomMotion(event.currentTarget.value);
     const heroTitle = root.querySelector("[data-live-motion-title]");
@@ -101,6 +128,10 @@ export function homeView(root, gameState, store) {
 
   bind(root, "[data-field='playerTwo']", "input", (event) => {
     store.setName("playerTwo", event.currentTarget.value);
+  });
+
+  bind(root, "[data-field='geminiKey']", "input", (event) => {
+    store.setGeminiKey(event.currentTarget.value);
   });
 
   bind(root, "[data-action='startMatch']", "click", () => {

@@ -14,6 +14,7 @@ const initialGame = {
     playerOne: "",
     playerTwo: ""
   },
+  geminiKey: "",
   motion: motions[0],
   players: {
     aff: "Player 1",
@@ -33,7 +34,7 @@ export function createStore() {
   const listeners = new Set();
 
   function emit() {
-    saveGame(gameState);
+    saveGame(createSavableGame(gameState));
     listeners.forEach((listener) => listener(gameState));
   }
 
@@ -105,9 +106,23 @@ export function createStore() {
       });
     },
 
+    randomizeMotion() {
+      const pool = motions.filter((motion) => motion.id !== gameState.motionId);
+      const nextMotion = pool[Math.floor(Math.random() * pool.length)] || motions[0];
+      update((draft) => {
+        draft.motionId = nextMotion.id;
+        draft.isCustomMotion = false;
+        return draft;
+      });
+    },
+
     setName(nameKey, value) {
       gameState.names[nameKey] = value;
-      saveGame(gameState);
+      saveGame(createSavableGame(gameState));
+    },
+
+    setGeminiKey(value) {
+      gameState.geminiKey = value;
     },
 
     startMatch() {
@@ -148,7 +163,7 @@ export function createStore() {
 
     saveNote(roundId, value) {
       gameState.notes[roundId] = value;
-      saveGame(gameState);
+      saveGame(createSavableGame(gameState));
     },
 
     togglePause() {
@@ -199,4 +214,10 @@ export function createStore() {
   };
 
   return actions;
+}
+
+function createSavableGame(gameState) {
+  const savableGame = structuredClone(gameState);
+  savableGame.geminiKey = "";
+  return savableGame;
 }

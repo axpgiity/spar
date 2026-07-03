@@ -1,4 +1,4 @@
-const MAX_TEXT = 12000;
+const maxText = 12000;
 
 function clampScore(value) {
   const number = Number(value);
@@ -6,7 +6,7 @@ function clampScore(value) {
   return Math.max(1, Math.min(10, Math.round(number)));
 }
 
-function cleanText(value, limit = MAX_TEXT) {
+function cleanText(value, limit = maxText) {
   return String(value || "").replace(/\s+/g, " ").trim().slice(0, limit);
 }
 
@@ -47,7 +47,7 @@ function transcriptForPrompt(payload) {
       return `${label}: ${text}`;
     })
     .join("\n\n")
-    .slice(0, MAX_TEXT);
+    .slice(0, maxText);
 }
 
 function buildPrompt(payload) {
@@ -146,43 +146,74 @@ function heuristicJudge(payload) {
 
 async function judgeDebate(body) {
   const payload = validatePayload(body);
-  const apiKey = process.env.ANTHROPIC_API_KEY;
+  const geminiApiKey = process.env.GOOGLE_API_KEY || process.env.GEMINI_API_KEY;
 
-  if (!apiKey) {
-    if (process.env.SPAR_DEMO_JUDGE === "1" || process.env.NODE_ENV !== "production") {
-      return { result: heuristicJudge(payload), demo: true };
-    }
-    const error = new Error("ANTHROPIC_API_KEY is not configured.");
-    error.statusCode = 503;
-    throw error;
+  if (geminiApiKey) {
+    return callGeminiJudge(payload, geminiApiKey);
   }
 
-  const tokenLimitKey = "max" + "_tokens";
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  if (process.env.SPAR_DEMO_JUDGE === "1" || process.env.NODE_ENV !== "production") {
+    return { result: heuristicJudge(payload), demo: true };
+  }
+
+  const error = new Error("GEMINI_API_KEY is not configured.");
+  error.statusCode = 503;
+  throw error;
+}
+
+async function callGeminiJudge(payload, apiKey) {
+  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(apiKey)}`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01"
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      model: process.env.ANTHROPIC_MODEL || "claude-3-5-sonnet-latest",
-      [tokenLimitKey]: 900,
-      temperature: 0.2,
-      messages: [{ role: "user", content: buildPrompt(payload) }]
+      contents: [
+        {
+          parts: [
+            {
+              text: buildPrompt(payload)
+            }
+          ]
+        }
+      ],
+      generationConfig: {
+        responseMimeType: "application/json",
+        temperature: 0.2
+      }
     })
   });
 
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const error = new Error(data?.error?.message || "AI judge request failed.");
+    const error = new Error(data?.error?.message || "Gemini judge request failed.");
     error.statusCode = response.status;
     throw error;
   }
 
-  const textBlock = Array.isArray(data.content) ? data.content.find((block) => block.type === "text") : null;
-  const raw = extractJson(textBlock?.text);
-  return { result: normalizeResult(raw), demo: false };
+  const text = data?.candidates?.[0]?.content?.parts?.map((part) => part.text || "").join("") || findLikelyJsonText(data);
+  const raw = extractJson(text);
+  return { result: normalizeResult(raw), demo: false, provider: "gemini" };
+}
+
+function findLikelyJsonText(value) {
+  if (typeof value === "string" && value.includes("{") && value.includes("}")) return value;
+  if (!value || typeof value !== "object") return "";
+
+  for (const child of Object.values(value)) {
+    if (Array.isArray(child)) {
+      for (const item of child) {
+        const found = findLikelyJsonText(item);
+        if (found) return found;
+      }
+    } else {
+      const found = findLikelyJsonText(child);
+      if (found) return found;
+    }
+  }
+
+  return "";
 }
 
 function send(res, status, data) {
