@@ -3,9 +3,11 @@ import { formats } from "../data/formats.js";
 import { createRounds } from "../data/rounds.js";
 import { loadSavedGame, saveGame, clearGame } from "../lib/storage.js";
 import { judgeGame } from "../lib/judgeClient.js";
+import { loadOfflineRankings, saveOfflineResult } from "../lib/rankings.js";
 
 const initialGame = {
   screen: "home",
+  homeTab: "play",
   motionId: "gorilla",
   customMotion: "",
   isCustomMotion: false,
@@ -25,11 +27,13 @@ const initialGame = {
   notes: {},
   isPaused: false,
   result: null,
-  isJudging: false
+  isJudging: false,
+  offlineRankings: []
 };
 
 export function createStore() {
   let gameState = loadSavedGame() || structuredClone(initialGame);
+  gameState.offlineRankings = loadOfflineRankings();
   let timerId = null;
   const listeners = new Set();
 
@@ -89,6 +93,13 @@ export function createStore() {
       update((draft) => {
         draft.motionId = motionId;
         draft.isCustomMotion = false;
+        return draft;
+      });
+    },
+
+    setHomeTab(homeTab) {
+      update((draft) => {
+        draft.homeTab = homeTab;
         return draft;
       });
     },
@@ -196,11 +207,13 @@ export function createStore() {
       });
 
       const result = await judgeGame(gameState);
+      saveOfflineResult(gameState, result);
 
       update((draft) => {
         draft.screen = "results";
         draft.result = result;
         draft.isJudging = false;
+        draft.offlineRankings = loadOfflineRankings();
         return draft;
       });
     },

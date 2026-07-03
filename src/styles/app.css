@@ -247,6 +247,39 @@ button {
   box-shadow: var(--shadow);
 }
 
+.gameTabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, .07);
+}
+
+.tabButton {
+  min-height: 42px;
+  border-radius: 18px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.tabButton.isActive {
+  background: rgba(255, 255, 255, .9);
+  color: #10181b;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .18);
+}
+
+.tabStage {
+  display: grid;
+  gap: 14px;
+  min-height: 520px;
+  align-content: start;
+}
+
 .megaPlayButton {
   min-height: 116px;
   border: 0;
@@ -360,7 +393,7 @@ button {
 }
 
 .arenaCard {
-  min-height: 108px;
+  min-height: 92px;
   padding: 14px;
   border-radius: 24px;
   cursor: pointer;
@@ -384,6 +417,14 @@ button {
   font-style: normal;
   font-weight: 720;
   line-height: 1.3;
+}
+
+.compactTopics .arenaCard {
+  min-height: 78px;
+}
+
+.compactTopics .arenaCard strong {
+  font-size: clamp(16px, 2.2vw, 22px);
 }
 
 .arenaCard.isActive,
@@ -463,6 +504,77 @@ button {
   border: 1px solid rgba(57, 230, 175, .24);
   border-radius: 22px;
   background: rgba(57, 230, 175, .08);
+}
+
+.rankSwitch {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.rankSwitch span {
+  display: grid;
+  place-items: center;
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 16px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+}
+
+.rankSwitch span.isActive {
+  background: var(--lime);
+  color: #10181b;
+}
+
+.rankList {
+  display: grid;
+  gap: 9px;
+}
+
+.rankRow {
+  display: grid;
+  grid-template-columns: 38px 1fr 70px;
+  align-items: center;
+  min-height: 58px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, .08);
+}
+
+.rankRow b {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  color: var(--lime);
+}
+
+.rankRow strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rankRow span {
+  justify-self: end;
+  color: var(--muted);
+  font-weight: 950;
+}
+
+.emptyState {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  border: 1px dashed rgba(255, 255, 255, .18);
+  border-radius: 22px;
+  color: var(--muted);
+  font-weight: 850;
 }
 
 .dockHeader {

@@ -29,75 +29,24 @@ export function homeView(root, gameState, store) {
         </div>
 
         <div class="arcadePanel">
-          <button class="megaPlayButton" data-action="startMatch">
-            <span>Play now</span>
-            <strong>${html(selectedFormat.vibe)}</strong>
-          </button>
+          <nav class="gameTabs" aria-label="Game sections">
+            ${tabButton("play", "Play", gameState.homeTab)}
+            ${tabButton("topics", "Topics", gameState.homeTab)}
+            ${tabButton("ranks", "Ranks", gameState.homeTab)}
+            ${tabButton("settings", "Settings", gameState.homeTab)}
+          </nav>
 
-          <div class="quickActions">
-            <button class="chunkButton" data-action="randomMotion">
-              <span>New topic</span>
-              <strong>Shuffle</strong>
-            </button>
-            <button class="chunkButton" data-action="customMotion">
-              <span>Your fight</span>
-              <strong>Custom</strong>
-            </button>
-          </div>
-
-          <label class="gameInput keySlot">
-            <span>Gemini key</span>
-            <input data-field="geminiKey" type="password" value="${html(gameState.geminiKey || "")}" placeholder="Paste your key for AI judging">
-          </label>
-
-          ${gameState.isCustomMotion ? `
-            <div class="customTray">
-              <label class="gameInput">
-                <span>Motion</span>
-                <input data-field="customMotion" value="${html(gameState.customMotion)}" placeholder="Type the debate everyone is arguing about">
-              </label>
-            </div>
-          ` : ""}
-
-          <div class="arenaSelect" aria-label="Debate motions">
-            ${motions.map((motion) => `
-              <button class="arenaCard ${motion.id === gameState.motionId && !gameState.isCustomMotion ? "isActive" : ""}" data-motion-id="${html(motion.id)}">
-                <span>${html(motion.type)} / ${html(motion.heat)}</span>
-                <strong>${html(motion.title)}</strong>
-                <em>${html(motion.angle)}</em>
-              </button>
-            `).join("")}
-          </div>
-
-          <div class="bottomDeck">
-            <div class="modeDeck">
-              ${Object.values(formats).map((format) => `
-                <button class="modeTile ${format.id === gameState.formatId ? "isActive" : ""}" data-format-id="${html(format.id)}">
-                  <span>${html(format.length)}</span>
-                  <strong>${html(format.label)}</strong>
-                  <em>${html(format.vibe)}</em>
-                </button>
-              `).join("")}
-            </div>
-
-            <details class="playerDrawer">
-              <summary>Player names</summary>
-              <div class="drawerGrid">
-                <label class="gameInput">
-                  <span>Player 1</span>
-                  <input data-field="playerOne" value="${html(gameState.names.playerOne)}" placeholder="Player 1">
-                </label>
-                <label class="gameInput">
-                  <span>Player 2</span>
-                  <input data-field="playerTwo" value="${html(gameState.names.playerTwo)}" placeholder="Player 2">
-                </label>
-              </div>
-            </details>
+          <div class="tabStage">
+            ${renderTab(gameState, selectedFormat)}
           </div>
         </div>
       </section>
     </main>
   `;
+
+  bind(root, "[data-tab-id]", "click", (event) => {
+    store.setHomeTab(event.currentTarget.dataset.tabId);
+  });
 
   bind(root, "[data-motion-id]", "click", (event) => {
     store.chooseMotion(event.currentTarget.dataset.motionId);
@@ -137,4 +86,110 @@ export function homeView(root, gameState, store) {
   bind(root, "[data-action='startMatch']", "click", () => {
     store.startMatch();
   });
+}
+
+function tabButton(tabId, label, activeTab) {
+  return `
+    <button class="tabButton ${activeTab === tabId ? "isActive" : ""}" data-tab-id="${html(tabId)}">
+      ${html(label)}
+    </button>
+  `;
+}
+
+function renderTab(gameState, selectedFormat) {
+  if (gameState.homeTab === "topics") return renderTopicsTab(gameState);
+  if (gameState.homeTab === "ranks") return renderRanksTab(gameState);
+  if (gameState.homeTab === "settings") return renderSettingsTab(gameState);
+  return renderPlayTab(gameState, selectedFormat);
+}
+
+function renderPlayTab(gameState, selectedFormat) {
+  return `
+    <button class="megaPlayButton" data-action="startMatch">
+      <span>Play</span>
+      <strong>${html(selectedFormat.label)} / ${html(selectedFormat.length)}</strong>
+    </button>
+    <div class="quickActions">
+      <button class="chunkButton" data-action="randomMotion">
+        <span>Topic</span>
+        <strong>Shuffle</strong>
+      </button>
+      <button class="chunkButton" data-action="customMotion">
+        <span>Motion</span>
+        <strong>Custom</strong>
+      </button>
+    </div>
+    <div class="modeDeck">
+      ${Object.values(formats).map((format) => `
+        <button class="modeTile ${format.id === gameState.formatId ? "isActive" : ""}" data-format-id="${html(format.id)}">
+          <span>${html(format.length)}</span>
+          <strong>${html(format.label)}</strong>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderTopicsTab(gameState) {
+  return `
+    ${gameState.isCustomMotion ? `
+      <div class="customTray">
+        <label class="gameInput">
+          <span>Motion</span>
+          <input data-field="customMotion" value="${html(gameState.customMotion)}" placeholder="Type a custom motion">
+        </label>
+      </div>
+    ` : ""}
+    <div class="arenaSelect compactTopics" aria-label="Debate motions">
+      ${motions.map((motion) => `
+        <button class="arenaCard ${motion.id === gameState.motionId && !gameState.isCustomMotion ? "isActive" : ""}" data-motion-id="${html(motion.id)}">
+          <span>${html(motion.type)}</span>
+          <strong>${html(motion.title)}</strong>
+        </button>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderRanksTab(gameState) {
+  const rankings = gameState.offlineRankings || [];
+  return `
+    <div class="rankSwitch">
+      <span class="isActive">Offline</span>
+      <span>Online soon</span>
+    </div>
+    <div class="rankList">
+      ${rankings.length ? rankings.map((player, index) => `
+        <div class="rankRow">
+          <b>${index + 1}</b>
+          <strong>${html(player.name)}</strong>
+          <span>${html(player.rating)}</span>
+        </div>
+      `).join("") : `
+        <div class="emptyState">Play a match to seed local ranks.</div>
+      `}
+    </div>
+  `;
+}
+
+function renderSettingsTab(gameState) {
+  return `
+    <label class="gameInput keySlot">
+      <span>Gemini key</span>
+      <input data-field="geminiKey" type="password" value="${html(gameState.geminiKey || "")}" placeholder="AI judging key">
+    </label>
+    <details class="playerDrawer" open>
+      <summary>Players</summary>
+      <div class="drawerGrid">
+        <label class="gameInput">
+          <span>Player 1</span>
+          <input data-field="playerOne" value="${html(gameState.names.playerOne)}" placeholder="Player 1">
+        </label>
+        <label class="gameInput">
+          <span>Player 2</span>
+          <input data-field="playerTwo" value="${html(gameState.names.playerTwo)}" placeholder="Player 2">
+        </label>
+      </div>
+    </details>
+  `;
 }
